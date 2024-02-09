@@ -61,6 +61,10 @@ options:
         description:
             - Use either the "push" or "pull" metrics mode. Default is "push".
         required: false
+    query_source:
+        description:
+            - slowlog, perfschema, or none - the source of query performance metrics
+        required: false
 
 
 
@@ -158,6 +162,7 @@ def run_module():
         port=dict(type="int", required=False),
         environment=dict(type="str", required=False),
         metrics_mode=dict(type="str", default="push", required=False),
+        query_source=dict(type="str", default="slowlog", required=False),
         tls=dict(type="bool", required=False, default=False),
         state=dict(type="str", required=True, default="present"),
     )
@@ -210,6 +215,8 @@ def run_module():
             cmd.append("--service-name={}".format(module.params["service_name"]))
         if module.params["metrics_mode"] is not None:
             cmd.append("--metrics-mode={}".format(module.params["metrics_mode"]))
+        if module.params["query_source"] is not None:
+            cmd.append("--query-source={}".format(module.params["query_source"]))
     elif module.params["state"] == "absent":
         cmd.insert(1, "remove")
         if module.params["service_name"] is not None:
